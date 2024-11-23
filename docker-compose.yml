@@ -1,0 +1,95 @@
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: .docker/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+      # The port numbers are... host:container
+      # The container port is exposed to your (local)host port
+      # For example, the ports clause here exposes the container port 80 to your localhost:8000
+    volumes:
+      - ./backend:/var/www/html
+      - .docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - .docker/nginx/ssl/marketplace-dev.crt:/etc/nginx/ssl/server.crt
+      - .docker/nginx/ssl/marketplace-dev.key:/etc/nginx/ssl/server.key
+    # user: ${USER_ID}:${GROUP_ID}
+    depends_on:
+      - php
+      - mysql
+      # - mssql
+
+  mysql:
+    image: mariadb:10.7
+    container_name: mariadb-dev
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: backend
+      MYSQL_USER: backend
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    # networks:
+    #   - laravel
+
+  # mssql:
+  #   container_name: mssql-dev
+  #   environment:
+  #     SA_PASSWORD: "Please01#Please02"
+  #     ACCEPT_EULA: "Y"
+  #     MSSQL_PID: Developer
+  #   build:
+  #     context: .docker/mssql
+  #     args:
+  #       UID: ${USER_ID}
+  #       GID: ${GROUP_ID}
+  #   tty: true
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - .docker/mssql/mssqlsystem:/var/opt/mssql
+  #     - .docker/mssql/mssqluser:/var/opt/sqlserver
+
+  php:
+    container_name: php-8-3
+    build:
+      context: ./backend
+      dockerfile: ../.docker/php/Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./backend:/var/www/html
+      - .docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    # user: ${USER_ID}:${GROUP_ID}
+
+  frontend:
+    container_name: node
+    build:
+      # specifies that the build context is the frontend directory,
+      # which means that any relative paths in the Dockerfile
+      # will be resolved relative to the frontend directory.
+      context: ./frontend
+      # the Dockerfile to use is specified *** relative to the context ***
+      dockerfile: ../.docker/node/Dockerfile
+      target: dev
+      args:
+        UID: ${USER_ID}
+        GID: ${GROUP_ID}
+    command: yarn dev
+    environment:
+      - NODE_ENV=development
+      #if you’re using Windows, you may need to uncomment the next line - Sol from @Kobe E
+      #- WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - nginx
+    ports:
+      - 3000:3000
