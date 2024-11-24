@@ -5,7 +5,7 @@ services:
       context: .docker/nginx
     ports:
       - "80:80"
-      - "443:443"
+      # - "443:443"
       # The port numbers are... host:container
       # The container port is exposed to your (local)host port
       # For example, the ports clause here exposes the container port 80 to your localhost:8000

@@ -1,0 +1,53 @@
+server {
+    listen 80;
+#    listen 443 ssl;
+#    server_name marketplace-api.dev.wsl;
+    server_name backend-api.dev.docker;
+    error_log /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+    root /var/www/html/public;
+
+#    ssl_certificate /etc/nginx/ssl/server.crt;
+#    ssl_certificate_key /etc/nginx/ssl/server.key;
+
+    index index.php;  # Ensure index.php is set as the default index file
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass php:9000;  # Adjust this according to your Docker setup
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+server {
+    listen 80;
+#    listen 443 ssl;
+#    server_name marketplace.dev.wsl;
+    server_name frontend.dev.docker;
+    error_log /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+
+#    ssl_certificate /etc/nginx/ssl/server.crt;
+#    ssl_certificate_key /etc/nginx/ssl/server.key;
+
+    location / {
+        proxy_pass http://frontend:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

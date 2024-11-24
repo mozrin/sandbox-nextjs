@@ -1,0 +1,98 @@
+.container {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.photoContainer {
+  position: relative;
+  width: 500px; /* Set the container width */
+  height: 500px; /* Set the container height */
+  overflow: hidden; /* Hide the overflowing parts of the image */
+}
+
+.profilePhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover the container while maintaining aspect ratio */
+  object-position: top; /* Align the image to the top */
+}
+
+.leftArrow,
+.rightArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+.leftArrow {
+  left: 10px;
+}
+
+.rightArrow {
+  right: 10px;
+}
+
+.leftArrow:hover,
+.rightArrow:hover {
+  opacity: 1;
+}
+
+.photoIndicators {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+
+.photoIndicator {
+  width: 10px;
+  height: 10px;
+  margin: 0 2px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.photoIndicator.active {
+  background-color: white;
+}
+
+.profileInfo {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: white;
+}
+
+.profileHandle {
+  font-size: 24px;
+  margin: 0;
+}
+
+.profileDetails {
+  font-size: 16px;
+  margin: 0;
+}
+
+.profileIntro,
+.profileBio {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+}

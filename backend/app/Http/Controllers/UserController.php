@@ -33,6 +33,16 @@ class UserController extends Controller
     }
 
     // Display the specified user.
+
+    public function indexWithProfiles()
+    {
+        // Fetch all users with their profiles 
+
+        $users = User::with('profile')->get(); // Return the users as a JSON response 
+
+        return response()->json($users);
+    }
+
     public function show($id)
     {
         return User::findOrFail($id);
