@@ -6,9 +6,65 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Carbon;
+
 class UserController extends Controller
 {
+    public function lastOnline($id)
+    {
+        $folderPath = public_path("pictures/{$id}");
+        $filePath = $folderPath . '/last_online';
+
+        if (!File::exists($folderPath)) {
+            return response()->json(['error' => 'Folder not found'], 404);
+        }
+
+        if (!File::exists($filePath)) {
+            // Create the file if it doesn't exist and set its timestamp to the folder's last modified date
+            touch($filePath, File::lastModified($folderPath));
+        }
+
+        $lastModified = Carbon::createFromTimestamp(File::lastModified($filePath));
+        $now = Carbon::now();
+        $differenceInSeconds = abs($now->diffInSeconds($lastModified));
+        $minutes = floor($differenceInSeconds / 60);
+        $seconds = $differenceInSeconds % 60;
+
+        // Determine color and text based on time difference
+
+        if ($differenceInSeconds >= 400) {
+            $days = floor($differenceInSeconds / 86400);
+            if ($days == 0) {
+                $onlineMessage = "OFFLINE RECENTLY";
+            } elseif ($days == 1) {
+                $onlineMessage = "OFFLINE 1 Day";
+            } else {
+                $onlineMessage = "OFFLINE {$days} Days";
+            }
+            $color = 'red';
+        } else {
+            $formattedDifference = sprintf("%02d:%02d", $minutes, $seconds);
+
+            if ($differenceInSeconds >= 300) {
+                $color = 'orange';
+                $onlineMessage = "RECENT $formattedDifference";
+            } else {
+                $color = 'green';
+                $onlineMessage = "ONLINE $formattedDifference";
+            }
+        }
+
+        return response()->json([
+            'userId' => $id,
+            'lastOnline' => $lastModified->toDateTimeString(),
+            'onlineMessage' => $onlineMessage,
+            'color' => $color
+        ]);
+    }
+
     // Display a listing of the users.
+
     public function index()
     {
         return User::all();

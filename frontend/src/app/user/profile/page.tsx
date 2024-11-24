@@ -19,6 +19,9 @@ const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [isMouseOverPhoto, setIsMouseOverPhoto] = useState(false);
+  const [onlineMessage, setOnlineMessage] = useState<string>("ONLINE 00:00");
+  const [color, setColor] = useState<string>("rgba(0, 128, 0, 0.5)");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -72,7 +75,26 @@ const ProfilePage: React.FC = () => {
         setLoading(false);
       }
     };
+
+    const fetchLastOnline = async () => {
+      try {
+        const response = await fetch(
+          "http://backend.dev.docker/api/user/1/last_online"
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch last online data");
+        }
+        const data = await response.json();
+
+        setOnlineMessage(data.onlineMessage);
+        setColor(data.color); // Color is received in RGBA format from API
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
+
     fetchProfile();
+    fetchLastOnline();
   }, []);
 
   const handlePrevious = () => {
@@ -91,38 +113,54 @@ const ProfilePage: React.FC = () => {
     );
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    if (isMouseOverPhoto) {
+      if (event.deltaY < 0) {
+        handlePrevious();
+      } else {
+        handleNext();
+      }
+    }
+  };
 
   return (
-    profile && (
-      <div className={styles.profileContainer}>
-        <div className={styles.photoContainer}>
-          <img
-            src={profile.photos[currentPhotoIndex]} // Use the current photo
-            alt="Profile"
-            className={styles.profilePhoto}
-          />
-          <button onClick={handlePrevious} className={styles.leftArrow}>
-            &#9664; {/* Left arrow symbol */}
-          </button>
-          <button onClick={handleNext} className={styles.rightArrow}>
-            &#9654; {/* Right arrow symbol */}
-          </button>
-          <div className={styles.photoIndicators}>
-            {profile.photos.map((_, index) => (
-              <div
-                key={index}
-                className={`${styles.photoIndicator} ${
-                  index === currentPhotoIndex ? styles.active : ""
-                }`}
-              ></div>
-            ))}
+    <div className={styles.profileContainer} onWheel={handleWheel}>
+      {loading && <div>Loading...</div>}
+      {error && <div>Error: {error}</div>}
+      {profile && (
+        <>
+          <div
+            className={styles.photoContainer}
+            onMouseEnter={() => setIsMouseOverPhoto(true)}
+            onMouseLeave={() => setIsMouseOverPhoto(false)}
+          >
+            <div
+              className={styles.onlineStatus}
+              style={{ backgroundColor: color }}
+            >
+              {onlineMessage}
+            </div>
+            <img
+              src={profile.photos[currentPhotoIndex]} // Use the current photo
+              alt="Profile"
+              className={styles.profilePhoto}
+            />
+            <button onClick={handlePrevious} className={styles.leftArrow}>
+              &#9664; {/* Left arrow symbol */}
+            </button>
+            <button onClick={handleNext} className={styles.rightArrow}>
+              &#9654; {/* Right arrow symbol */}
+            </button>
+            <div className={styles.photoIndicators}>
+              {profile.photos.map((_, index) => (
+                <div
+                  key={index}
+                  className={`${styles.photoIndicator} ${
+                    index === currentPhotoIndex ? styles.active : ""
+                  }`}
+                ></div>
+              ))}
+            </div>
           </div>
           <div className={styles.profileInfo}>
             <h1 className={styles.profileHandle}>{profile.handle}</h1>
@@ -135,11 +173,11 @@ const ProfilePage: React.FC = () => {
               / {profile.city}, {profile.country}
             </p>
           </div>
-        </div>
-        <div className={styles.profileIntro}>{profile.intro}</div>
-        <div className={styles.profileBio}>{profile.bio}</div>
-      </div>
-    )
+          <div className={styles.profileIntro}>{profile.intro}</div>
+          <div className={styles.profileBio}>{profile.bio}</div>
+        </>
+      )}
+    </div>
   );
 };
 
