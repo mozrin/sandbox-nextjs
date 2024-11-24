@@ -1,0 +1,22 @@
+/* ProfileDemographicBox.module.css */
+
+.profileInfoBox {
+  position: absolute;
+  bottom: 40px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.5); /* Black box with 30% opacity */
+  color: #ffffff; /* Fully opaque white text */
+  padding: 10px;
+  z-index: 1;
+  border-radius: 5px; /* Rounded corners */
+  text-align: left;
+}
+
+.profileHandle {
+  font-size: 22px; /* Handle size 22 */
+  font-weight: bold;
+}
+
+.profileDetails {
+  font-size: 14px; /* Text size 14 */
+}

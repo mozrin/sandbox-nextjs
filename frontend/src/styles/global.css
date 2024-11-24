@@ -1,5 +1,39 @@
-/* global.css */
-* {
+/* styles/global.css */
+html, body, #__next, .layout {
+  height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden; /* Disable global scroll bars */
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto; /* Allow internal scrolling */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.content::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+/* Ensure no scrollbars on any element */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }

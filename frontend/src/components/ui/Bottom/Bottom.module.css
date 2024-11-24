@@ -1,0 +1,23 @@
+/* src/components/ui/Bottom/Bottom.module.css */
+.navBar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background-color: #333;
+  color: white;
+  padding: 5px 5px;
+  z-index: 1000;
+}
+
+.navItem {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+}
+
+.activeNavItem {
+  background-color: #555; /* Highlight active item */
+  border-radius: 15px;
+}

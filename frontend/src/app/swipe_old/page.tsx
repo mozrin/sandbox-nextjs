@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import styles from "./profile.module.css";
+import OnlineStatusBox from "@/components/OnlineStatusBox";
+import ProfileDemographicBox from "@/components/ProfileDemographicBox";
 
 interface Profile {
   handle: string;
@@ -134,16 +136,18 @@ const ProfilePage: React.FC = () => {
             onMouseEnter={() => setIsMouseOverPhoto(true)}
             onMouseLeave={() => setIsMouseOverPhoto(false)}
           >
-            <div
-              className={styles.onlineStatus}
-              style={{ backgroundColor: color }}
-            >
-              {onlineMessage}
-            </div>
+            <OnlineStatusBox onlineMessage={onlineMessage} color={color} />
+
             <img
               src={profile.photos[currentPhotoIndex]} // Use the current photo
-              alt="Profile"
+              alt={`Profile ${currentPhotoIndex}`}
               className={styles.profilePhoto}
+            />
+            <ProfileDemographicBox
+              handle={profile.handle}
+              gender={profile.gender}
+              city={profile.city}
+              country={profile.country}
             />
             <button onClick={handlePrevious} className={styles.leftArrow}>
               &#9664; {/* Left arrow symbol */}
@@ -161,17 +165,6 @@ const ProfilePage: React.FC = () => {
                 ></div>
               ))}
             </div>
-          </div>
-          <div className={styles.profileInfo}>
-            <h1 className={styles.profileHandle}>{profile.handle}</h1>
-            <p className={styles.profileDetails}>
-              {profile.gender === 1
-                ? "Male"
-                : profile.gender === 2
-                ? "Female"
-                : "Other"}{" "}
-              / {profile.city}, {profile.country}
-            </p>
           </div>
           <div className={styles.profileIntro}>{profile.intro}</div>
           <div className={styles.profileBio}>{profile.bio}</div>

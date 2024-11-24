@@ -1,0 +1,8 @@
+/* src/components/ui/Content/Content.module.css */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  margin-top: 60px; /* Adjust according to the height of the top bar */
+  margin-bottom: 60px; /* Adjust according to the height of the bottom bar */
+}
