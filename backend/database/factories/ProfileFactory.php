@@ -82,10 +82,23 @@ class ProfileFactory extends Factory
      * @param string $path
      * @return array
      */
+
     private function getPhotosFromFolder(string $path): array
     {
+        // Check if the path exists and is a directory
         if (!File::exists($path) || !File::isDirectory($path)) {
             return [];
+        }
+
+        // Path to the last_online file
+        $lastOnlinePath = $path . '/last_online';
+
+        // Touch or create the last_online file
+        if (!File::exists($lastOnlinePath)) {
+            File::put($lastOnlinePath, '');
+        } else {
+            // Use file_put_contents to touch the file
+            file_put_contents($lastOnlinePath, '', FILE_APPEND);
         }
 
         // Get all files in the directory

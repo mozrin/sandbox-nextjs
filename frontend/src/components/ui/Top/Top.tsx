@@ -7,7 +7,7 @@ import styles from "./Top.module.css";
 // Function to convert pathname to page name
 const getPageName = (pathname: string | null): string => {
   if (!pathname) {
-    return "Home";
+    return "Dashboard";
   }
 
   switch (pathname) {
@@ -22,7 +22,7 @@ const getPageName = (pathname: string | null): string => {
     case "/my-profile":
       return "My Profile";
     default:
-      return "Home";
+      return "Dashboard";
   }
 };
 
