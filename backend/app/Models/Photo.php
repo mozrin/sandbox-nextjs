@@ -27,4 +27,9 @@ class Photo extends Model
     {
         return $this->belongsTo(Profile::class);
     }
+
+    public function user()
+    {
+        return $this->hasOneThrough(User::class, Profile::class, 'id', 'id', 'profile_id', 'user_id');
+    }
 }

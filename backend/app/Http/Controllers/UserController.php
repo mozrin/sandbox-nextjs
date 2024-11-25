@@ -99,6 +99,15 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    public function indexWithProfilesWithPhotos()
+    {
+        // Fetch all users with their profiles 
+
+        $users = User::with(['profile.photos'])->get(); // Return the users as a JSON response
+
+        return response()->json($users);
+    }
+
     public function show($id)
     {
         return User::findOrFail($id);
@@ -127,5 +136,22 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function getProfile($id)
+    {
+        $user = User::with('profile')->findOrFail($id);
+        return response()->json($user->profile);
+    }
+
+    public function getProfileWithPhotos($id)
+    {
+        $user = User::with(['profile.photos'])->findOrFail($id);
+        return response()->json($user->profile);
+    }
+    public function getPhotos($id)
+    {
+        $user = User::with('profile.photos')->findOrFail($id);
+        return response()->json($user->profile->photos);
     }
 }

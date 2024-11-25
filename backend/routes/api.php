@@ -6,14 +6,20 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/my-profile', [ProfileController::class, 'show']);
-
+Route::get('/user/{id}/photos', [UserController::class, 'getPhotos']);
 Route::get('/user/{id}/last_online', [UserController::class, 'lastOnline']);
+Route::get('/user/{id}/profile', [UserController::class, 'getProfile']);
+Route::get('/user/{id}/profile/photos', [UserController::class, 'getProfileWithPhotos']);
+
+Route::get('/photo/{id}', [PhotoController::class, 'show']); // TODO Some security would be nice here.
 
 Route::get('/users', [UserController::class, 'index']);
-Route::get('/usersWithProfiles', [UserController::class, 'indexWithProfiles']);
+Route::get('/users/profiles', [UserController::class, 'indexWithProfiles']);
+Route::get('/users/profiles/photos', [UserController::class, 'indexWithProfilesWithPhotos']);
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);

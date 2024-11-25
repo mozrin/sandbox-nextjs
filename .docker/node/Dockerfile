@@ -12,8 +12,8 @@ RUN npm ci
 
 FROM base AS dev
 
-# ARG UID
-# ARG GID
+# ARG USER_ID
+# ARG GROUP_ID
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -28,7 +28,7 @@ CMD ["npm", "run", "dev"]
 # the .env file used by docker-compose.yml
 #
 # Create a new user group
-# RUN addgroup -S -g ${GID:-1010} appgroup
+# RUN addgroup -S -g ${GROUP_ID:-1010} appgroup
 
 #
 # Modify the node user (built into the node alpine image) to have your group and user id.
@@ -38,7 +38,7 @@ CMD ["npm", "run", "dev"]
 # 1010:1010.
 #
 # RUN deluser node
-# RUN adduser -u ${UID:-1010} node -G appgroup -D
+# RUN adduser -u ${USER_ID:-1010} node -G appgroup -D
 
 # USER node 
 
@@ -62,8 +62,8 @@ CMD ["npm", "run", "dev"]
 # # disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
-# RUN addgroup --system --gid 1010 nodejs
-# RUN adduser --system --uid 1010 nextjs
+# RUN addgroup --system --GROUP_ID 1010 nodejs
+# RUN adduser --system --USER_ID 1010 nextjs
 
 # COPY --from=builder /app/public ./public
 
